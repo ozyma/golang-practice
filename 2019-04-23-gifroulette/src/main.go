@@ -1,38 +1,46 @@
 package main
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
+	//"fmt"
+	//"log"
+	"net/http"
 )
 
 //gameSession object will hold all of the necessary
-type gameSession struct {
-	sessionID          string     `json:"sessionID"`
-	sessionCookieToken string     `json:"sessionCookieToken"`
-	sessionAdminToken  string     `json:"sessionAdminToken"`
-	playerCount        int        `json:"players"`
-	questions          []question `json:"questions"`
+type GameSession struct {
+	SessionID          string     `json:"sessionID"`
+	SessionCookieToken string     `json:"sessionCookieToken"`
+	SessionAdminToken  string     `json:"sessionAdminToken"`
+	PlayerCount        int32      `json:"playerCount,string"`
+	Questions          []Question `json:"questions"`
 }
 
-type question struct {
-	prompt  string `json:"prompt"`
-	gifLink string `json:"gifLink"`
+type Question struct {
+	Prompt  string `json:"prompt"`
+	GifLink string `json:"gifLink"`
+}
+
+
+//function is used for testing purposes to marshal JSON responses back and
+//forth
+func indexhandler(w http.ResponseWriter, r *http.Request) {
+	mySession := GameSession{
+		SessionID:          "IDamskljd29ijc",
+		SessionCookieToken: "cookiekadsmkl;m",
+		SessionAdminToken:  "ADMINu870nu89unfq2980un809u",
+		PlayerCount:        3,
+		Questions: []Question{
+			{"testKey", "testVal"},
+			{"testKey2", "testVal2"},
+		},
+	}
+	var buf GameSession
+	json.NewEncoder(w).Encode(mySession)
+	
 }
 
 func main() {
-	log.Print("Starting the server")
-	log.Print("Checking the gif link storage server")
-	log.Print("Gif link server has been validated")
-
-	mySession := gameSession{
-		sessionID:          "IDamskljd29ijc",
-		sessionCookieToken: "cookiekadsmkl;m",
-		sessionAdminToken:  "ADMINu870nu89unfq2980un809u",
-		playerCount:        3,
-		questions: []question{
-			{"testKey", "testVal"},
-		},
-	}
-	fmt.Println(mySession)
-	fmt.Println(mySession.questions.question)
+	http.HandleFunc("/", indexhandler)
+	http.ListenAndServe(":8080", nil)
 }
