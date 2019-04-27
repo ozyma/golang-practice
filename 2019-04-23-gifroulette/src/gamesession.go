@@ -28,7 +28,7 @@ func (r GameSession) PrintGameSession() {
 	fmt.Println(r)
 }
 
-func (r GameSession) ChangeIDName(){
+func (r *GameSession) ChangeIDName() {
 	r.SessionID = "RogerWilko"
 	r.PrintGameSession()
 }
